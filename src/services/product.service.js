@@ -1,6 +1,219 @@
+/**
+ * @swagger
+ * /admin/api/v1/product/create:
+ *   post:
+ *     tags: ['Products']
+ *     summary: Create a new product
+ *     description: Adds a new product to the database with the specified details.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *                 description: The title of the product.
+ *                 example: "Smartphone"
+ *               description:
+ *                 type: string
+ *                 description: The description of the product.
+ *                 example: "A high-quality smartphone with 128GB storage."
+ *               amount:
+ *                 type: number
+ *                 description: The amount of the product in stock.
+ *                 example: 50
+ *               image:
+ *                 type: string
+ *                 format: binary
+ *                 description: The product image file.
+ *     responses:
+ *       201:
+ *         description: Product successfully created.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: "success"
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                       example: "123e4567-e89b-12d3-a456-426614174000"
+ *                     title:
+ *                       type: string
+ *                       example: "Smartphone"
+ *                     description:
+ *                       type: string
+ *                       example: "A high-quality smartphone with 128GB storage."
+ *                     amount:
+ *                       type: number
+ *                       example: 50
+ *                     image:
+ *                       type: string
+ *                       example: "smartphone.jpg"
+ *       400:
+ *         description: Validation error.
+ *       500:
+ *         description: Internal server error.
+ */
+
+/**
+ * @swagger
+ * /admin/api/v1/products/get/all:
+ *   get:
+ *     tags: ['Products']
+ *     summary: Get all products
+ *     description: Retrieves all products from the database.
+ *     responses:
+ *       200:
+ *         description: List of products retrieved successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: "success"
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                         example: "123e4567-e89b-12d3-a456-426614174000"
+ *                       title:
+ *                         type: string
+ *                         example: "Smartphone"
+ *                       description:
+ *                         type: string
+ *                         example: "A high-quality smartphone with 128GB storage."
+ *                       amount:
+ *                         type: number
+ *                         example: 50
+ *                       image:
+ *                         type: string
+ *                         example: "smartphone.jpg"
+ *       404:
+ *         description: No products found.
+ *       500:
+ *         description: Internal server error.
+ */
+
+/**
+ * @swagger
+ * /admin/api/v1/product/update/{id}:
+ *   put:
+ *     tags: ['Products']
+ *     summary: Update an existing product
+ *     description: Updates the details of an existing product by its ID.
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The unique ID of the product to update.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *                 description: Updated title of the product.
+ *                 example: "Updated Smartphone"
+ *               description:
+ *                 type: string
+ *                 description: Updated description of the product.
+ *                 example: "An updated high-quality smartphone with 256GB storage."
+ *               amount:
+ *                 type: number
+ *                 description: Updated amount of the product.
+ *                 example: 100
+ *     responses:
+ *       200:
+ *         description: Product updated successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: "success"
+ *                 message:
+ *                   type: string
+ *                   example: "Product updated successfully"
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                       example: "123e4567-e89b-12d3-a456-426614174000"
+ *                     title:
+ *                       type: string
+ *                       example: "Updated Smartphone"
+ *                     description:
+ *                       type: string
+ *                       example: "An updated high-quality smartphone with 256GB storage."
+ *                     amount:
+ *                       type: number
+ *                       example: 100
+ *       400:
+ *         description: Validation error.
+ *       404:
+ *         description: Product not found.
+ *       500:
+ *         description: Internal server error.
+ */
+
+/**
+ * @swagger
+ * /admin/api/v1/product/delete/{id}:
+ *   delete:
+ *     tags: ['Products']
+ *     summary: Delete a product
+ *     description: Deletes a product from the database by its ID.
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The unique ID of the product to delete.
+ *     responses:
+ *       200:
+ *         description: Product successfully deleted.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: "success"
+ *                 message:
+ *                   type: string
+ *                   example: "Product deleted successfully"
+ *       404:
+ *         description: Product not found.
+ *       500:
+ *         description: Internal server error.
+ */
+
 const Joi = require("joi");
 const { v4: uuidv4 } = require("uuid");
-const { Product, Comment } = require("../../models/index");
+const { Product } = require("../../models/index");
 
 const createProduct = async (req, res) => {
   try {

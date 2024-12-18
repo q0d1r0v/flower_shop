@@ -1,8 +1,170 @@
+/**
+ * @swagger
+ * /admin/api/v1/comment/create:
+ *   post:
+ *     tags: ['Comments']
+ *     summary: Create a new comment
+ *     description: Creates a new comment for a specific product.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 description: The email of the user making the comment.
+ *                 example: "user@example.com"
+ *               text:
+ *                 type: string
+ *                 description: The content of the comment.
+ *                 example: "Great product! Highly recommended."
+ *               productId:
+ *                 type: string
+ *                 description: The ID of the product being commented on.
+ *                 example: "123e4567-e89b-12d3-a456-426614174000"
+ *     responses:
+ *       201:
+ *         description: Comment successfully created.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: "success"
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                       example: "123e4567-e89b-12d3-a456-426614174001"
+ *                     email:
+ *                       type: string
+ *                       example: "user@example.com"
+ *                     text:
+ *                       type: string
+ *                       example: "Great product! Highly recommended."
+ *                     product_id:
+ *                       type: string
+ *                       example: "123e4567-e89b-12d3-a456-426614174000"
+ *                     createdAt:
+ *                       type: string
+ *                       example: "2024-12-18T12:00:00.000Z"
+ *       400:
+ *         description: Validation error.
+ *       500:
+ *         description: Internal server error.
+ */
+
+/**
+ * @swagger
+ * /admin/api/v1/comments/get/by/productId/{productId}:
+ *   get:
+ *     tags: ['Comments']
+ *     summary: Get comments by product ID
+ *     description: Retrieves all comments for a specific product.
+ *     parameters:
+ *       - in: path
+ *         name: productId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the product.
+ *         example: "123e4567-e89b-12d3-a456-426614174000"
+ *     responses:
+ *       200:
+ *         description: List of comments for the product retrieved successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: "success"
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                         example: "123e4567-e89b-12d3-a456-426614174001"
+ *                       email:
+ *                         type: string
+ *                         example: "user@example.com"
+ *                       text:
+ *                         type: string
+ *                         example: "Great product! Highly recommended."
+ *                       product_id:
+ *                         type: string
+ *                         example: "123e4567-e89b-12d3-a456-426614174000"
+ *                       createdAt:
+ *                         type: string
+ *                         example: "2024-12-18T12:00:00.000Z"
+ *       404:
+ *         description: Product not found.
+ *       500:
+ *         description: Internal server error.
+ */
+
+/**
+ * @swagger
+ * /admin/api/v1/comments/get/all:
+ *   get:
+ *     tags: ['Comments']
+ *     summary: Get all comments
+ *     description: Retrieves all comments along with associated product details.
+ *     responses:
+ *       200:
+ *         description: List of all comments retrieved successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: "success"
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                         example: "123e4567-e89b-12d3-a456-426614174001"
+ *                       email:
+ *                         type: string
+ *                         example: "user@example.com"
+ *                       text:
+ *                         type: string
+ *                         example: "Great product! Highly recommended."
+ *                       product:
+ *                         type: object
+ *                         properties:
+ *                           id:
+ *                             type: string
+ *                             example: "123e4567-e89b-12d3-a456-426614174000"
+ *                           title:
+ *                             type: string
+ *                             example: "Flower Bouquet"
+ *                           description:
+ *                             type: string
+ *                             example: "A beautiful bouquet of flowers."
+ *                       createdAt:
+ *                         type: string
+ *                         example: "2024-12-18T12:00:00.000Z"
+ *       500:
+ *         description: Internal server error.
+ */
+
 const Joi = require("joi");
 const { v4: uuidv4 } = require("uuid");
-const { Op, where } = require("sequelize");
 const { Comment, Product } = require("../../models/index");
-const { text } = require("express");
 
 const createComment = async (req, res) => {
   try {
